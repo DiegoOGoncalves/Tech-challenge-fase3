@@ -7,11 +7,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - '${DB_EXTERNAL_PORT:-5432}:5432'
+      - "${DB_EXTERNAL_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -20,6 +20,7 @@ services:
       - app-network
 
   backend:
+    image: ${BACKEND_IMAGE:-braincodeschool-backend:local}
     build:
       context: ./back-end
       dockerfile: Dockerfile
@@ -37,15 +38,15 @@ services:
       JWT_EXPIRATION: ${JWT_EXPIRATION:-1h}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080,http://localhost:5173}
     ports:
-      - '${BACKEND_PORT:-3000}:3000'
+      - "${BACKEND_PORT:-3000}:3000"
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
       test:
         [
-          'CMD-SHELL',
-          'wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1',
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1",
         ]
       interval: 10s
       timeout: 5s
@@ -55,6 +56,7 @@ services:
       - app-network
 
   frontend:
+    image: ${FRONTEND_IMAGE:-braincodeschool-frontend:local}
     build:
       context: ./front-end
       dockerfile: Dockerfile
@@ -62,7 +64,7 @@ services:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
     restart: unless-stopped
     ports:
-      - '${FRONTEND_PORT:-8080}:80'
+      - "${FRONTEND_PORT:-8080}:80"
     depends_on:
       backend:
         condition: service_healthy

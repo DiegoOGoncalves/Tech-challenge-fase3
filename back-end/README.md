@@ -89,7 +89,6 @@ blog-api/
 │   │   └── posts.module.ts
 │   ├── app.module.ts
 │   └── main.ts
-├── .github/workflows/ci-cd.yml
 ├── Dockerfile
 ├── .env.example
 ├── package.json
@@ -191,13 +190,14 @@ O pipeline de CI está configurado para exigir, no mínimo, **20% de cobertura d
 
 ## CI/CD com GitHub Actions
 
-O workflow definido em `.github/workflows/ci-cd.yml` é executado a cada `push` ou `pull request` nas branches `main` e `develop`, e realiza:
+O workflow definido em `../.github/workflows/ci-cd.yml` é executado a cada `push` ou `pull request` nas branches `main` e `develop`, e realiza:
 
-1. Instalação de dependências (`npm ci`);
-2. Lint do código;
-3. Execução dos testes unitários com geração de cobertura, utilizando um serviço PostgreSQL efêmero;
-4. Build de produção da aplicação Nest.js;
-5. (Somente na branch `main`) Build e push da imagem Docker para o Docker Hub, utilizando os secrets `DOCKERHUB_USERNAME` e `DOCKERHUB_TOKEN`.
+1. Instalação de dependências do backend e frontend (`npm ci`);
+2. Lint e build das duas aplicações;
+3. Execução dos testes unitários do backend com PostgreSQL efêmero;
+4. Build da stack usando o Docker Compose;
+5. Smoke tests do backend e frontend em containers;
+6. (Somente na branch `main`) Build e push das imagens do backend e frontend para o GitHub Container Registry usando `GITHUB_TOKEN`.
 
 ## Relato de experiências e desafios
 
